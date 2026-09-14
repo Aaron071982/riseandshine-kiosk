@@ -89,10 +89,30 @@ final class KioskAPIClient {
     }
 
     func createEvent(_ body: CreateAttendanceEventRequest) async throws -> AttendanceEvent {
+        let payload = try encoder.encode(body)
+        let data = try await postStrict(path: "/api/kiosk/events", body: payload)
+        do {
+            return try decodeEvent(data)
+        } catch {
+            throw KioskAPIError.decoding
+        }
+    }
+
+    func todaysEvents() async throws -> [AttendanceEvent] {
+        let data = try await rawRequest(method: "GET", path: "/api/kiosk/events/today")
+        return try decodeEvents(data)
+    }
+
+    func submitIntake(_ body: IntakeSubmitRequest) async throws {
+        let data = try encoder.encode(body)
+        _ = try await postStrict(path: "/api/kiosk/intake", body: data)
+    }
+
+    private func postStrict(path: String, body: Data) async throws -> Data {
         guard let base = KioskConfig.baseURL else { throw KioskAPIError.notConfigured }
         guard let token = KeychainStore.loadToken(), !token.isEmpty else { throw KioskAPIError.notConfigured }
 
-        let urlString = base.absoluteString.trimmingCharacters(in: CharacterSet(charactersIn: "/")) + "/api/kiosk/events"
+        let urlString = base.absoluteString.trimmingCharacters(in: CharacterSet(charactersIn: "/")) + path
         guard let url = URL(string: urlString) else { throw KioskAPIError.notConfigured }
 
         var request = URLRequest(url: url)
@@ -101,7 +121,7 @@ final class KioskAPIClient {
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.httpBody = try encoder.encode(body)
+        request.httpBody = body
 
         let data: Data
         let resp: URLResponse
@@ -120,17 +140,7 @@ final class KioskAPIClient {
             if status == 401 { throw KioskAPIError.unauthorized }
             throw KioskAPIError.http(status, serverMessage(data))
         }
-
-        do {
-            return try decodeEvent(data)
-        } catch {
-            throw KioskAPIError.decoding
-        }
-    }
-
-    func todaysEvents() async throws -> [AttendanceEvent] {
-        let data = try await rawRequest(method: "GET", path: "/api/kiosk/events/today")
-        return try decodeEvents(data)
+        return data
     }
 
     private func request<T: Decodable>(method: String, path: String, query: [URLQueryItem] = [], body: Data? = nil) async throws -> T {

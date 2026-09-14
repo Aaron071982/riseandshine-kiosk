@@ -17,6 +17,7 @@ enum KioskScreen: Equatable {
     case sign
     case confirm
     case staffAudit
+    case intake
 }
 
 @MainActor
@@ -36,6 +37,7 @@ final class KioskAppState: ObservableObject {
     @Published var isSubmitting = false
     @Published var submitError: String?
     @Published var pendingCount = 0
+    @Published var intake: IntakeController?
 
     private var lastActivity = Date()
     private var searchTask: Task<Void, Never>?
@@ -67,6 +69,7 @@ final class KioskAppState: ObservableObject {
         selectedClient = nil
         confirmPayload = nil
         showStaffPIN = false
+        intake = nil
         screen = .idle
         registerActivity()
     }
@@ -79,12 +82,34 @@ final class KioskAppState: ObservableObject {
 
     func openDetail(_ client: DirectoryClient) {
         selectedClient = client
-        screen = .detail
+        registerActivity()
+        if client.intakeComplete {
+            screen = .detail
+        } else {
+            startIntake(client)
+        }
+    }
+
+    func startIntake(_ client: DirectoryClient) {
+        selectedClient = client
+        intake = IntakeController(client: client)
+        screen = .intake
+        registerActivity()
+    }
+
+    func cancelIntake() {
+        intake = nil
+        screen = .search
+        selectedClient = nil
         registerActivity()
     }
 
     func openSign() {
         guard selectedClient != nil else { return }
+        if let client = selectedClient, !client.intakeComplete {
+            startIntake(client)
+            return
+        }
         submitError = nil
         screen = .sign
         registerActivity()
@@ -99,6 +124,25 @@ final class KioskAppState: ObservableObject {
     func backFromSign() {
         screen = .detail
         registerActivity()
+    }
+
+    func applyIntakeComplete(clientId: String) {
+        if var client = selectedClient, client.id == clientId {
+            client.intakeComplete = true
+            selectedClient = client
+        }
+        searchResults = searchResults.map { row in
+            var copy = row
+            if copy.id == clientId { copy.intakeComplete = true }
+            return copy
+        }
+        var cached = DirectoryCache.load()
+        cached = cached.map { row in
+            var copy = row
+            if copy.id == clientId { copy.intakeComplete = true }
+            return copy
+        }
+        DirectoryCache.save(cached)
     }
 
     func requestStaffAudit() {
@@ -231,6 +275,50 @@ final class KioskAppState: ObservableObject {
             submitError = error.localizedDescription
         }
         isSubmitting = false
+    }
+
+    func submitIntake(signatureImage: UIImage) async {
+        guard let intake, let client = selectedClient else { return }
+        guard let png = signatureImage.pngData() else {
+            intake.submitError = "Couldn't capture the signature. Please sign again."
+            return
+        }
+
+        intake.isSubmitting = true
+        intake.submitError = nil
+
+        let signatureHash = SHA256.hash(data: png)
+            .map { String(format: "%02x", $0) }.joined()
+        let signaturePngBase64 = png.base64EncodedString()
+
+        let request = IntakeSubmitRequest(
+            serviceClientId: client.id,
+            signerName: intake.signerName.trimmingCharacters(in: .whitespacesAndNewlines),
+            signerRelationship: intake.relationship,
+            signatureHash: signatureHash,
+            signaturePngBase64: signaturePngBase64,
+            consentGiven: true,
+            forms: intake.payloadForms()
+        )
+
+        do {
+            try await api.submitIntake(request)
+            applyIntakeComplete(clientId: client.id)
+            self.intake = nil
+            submitError = nil
+            screen = .sign
+            registerActivity()
+        } catch let error as KioskAPIError where error.isUnauthorized {
+            intake.submitError = error.localizedDescription
+            auth = .unauthorized
+        } catch let error as KioskAPIError where error.isTransportError {
+            intake.submitError = "No network. Connect and submit again — this packet wasn’t saved."
+        } catch is URLError {
+            intake.submitError = "No network. Connect and submit again — this packet wasn’t saved."
+        } catch {
+            intake.submitError = error.localizedDescription
+        }
+        intake.isSubmitting = false
     }
 
     private func finishSuccess(client: DirectoryClient, direction: CheckDirection, eventId: String, queued: Bool) {

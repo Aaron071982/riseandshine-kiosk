@@ -1,0 +1,243 @@
+{
+  "version": 1,
+  "signature": {
+    "consentText": "By signing, I confirm I am authorized to sign for this child, the information in this packet is true and complete, and I agree to the permissions and acknowledgements I selected. Rise & Shine ABA will keep this packet in the child's record."
+  },
+  "forms": [
+    {
+      "code": "F01",
+      "title": "Photo & Video Release",
+      "enabled": true,
+      "required": true,
+      "sections": [
+        {
+          "id": "permissions",
+          "title": "Where may we use photos or video?",
+          "body": "Check any that you allow. Choose “none” if you do not want photos or video used.",
+          "fields": [
+            { "id": "p_internal", "type": "checkbox", "label": "Internal use only — staff training, clinical supervision, and internal review (not published)" },
+            { "id": "p_website", "type": "checkbox", "label": "Rise & Shine ABA website" },
+            { "id": "p_social", "type": "checkbox", "label": "Social media — Instagram, Facebook, TikTok, YouTube, LinkedIn" },
+            { "id": "p_print", "type": "checkbox", "label": "Printed materials — flyers, brochures, banners, event displays" },
+            { "id": "p_press", "type": "checkbox", "label": "Press and news media" },
+            { "id": "p_none", "type": "checkbox", "label": "I do NOT consent to any photo or video use of my child" }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "F02",
+      "title": "Release of Information",
+      "enabled": true,
+      "required": false,
+      "sections": [
+        {
+          "id": "party",
+          "title": "Who may we share with?",
+          "body": "Optional. Skip if this does not apply today.",
+          "fields": [
+            { "id": "roi_org", "type": "text", "label": "Name of person or organization" },
+            { "id": "roi_contact", "type": "text", "label": "Address / phone / fax" },
+            { "id": "roi_rel", "type": "text", "label": "Relationship to child" }
+          ]
+        },
+        {
+          "id": "scope",
+          "title": "What may we share?",
+          "fields": [
+            { "id": "roi_release", "type": "checkbox", "label": "Rise & Shine ABA may RELEASE information to the party above" },
+            { "id": "roi_obtain", "type": "checkbox", "label": "Rise & Shine ABA may OBTAIN information from the party above" },
+            { "id": "i_tx", "type": "checkbox", "label": "Treatment plans, progress reports, and assessment results" },
+            { "id": "i_notes", "type": "checkbox", "label": "Session notes and behavioral data" },
+            { "id": "i_iep", "type": "checkbox", "label": "IEP / IFSP and school records" },
+            { "id": "i_med", "type": "checkbox", "label": "Medical records and diagnostic evaluations" },
+            { "id": "i_ins", "type": "checkbox", "label": "Insurance and authorization information" },
+            { "id": "i_other", "type": "checkbox", "label": "Other" },
+            { "id": "roi_purpose", "type": "textarea", "label": "Purpose of this disclosure" }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "F03",
+      "title": "Medication Administration",
+      "enabled": true,
+      "required": false,
+      "conditionalGate": {
+        "id": "needs_medication",
+        "prompt": "Will your child need medication during session hours?",
+        "showFormWhen": "yes"
+      },
+      "sections": [
+        {
+          "id": "medication",
+          "title": "Medication details",
+          "fields": [
+            { "id": "med_name", "type": "text", "label": "Medication name", "requiredWhenFormShown": true },
+            { "id": "med_dose", "type": "text", "label": "Dosage", "requiredWhenFormShown": true },
+            { "id": "med_route", "type": "text", "label": "Route (oral, topical, inhaler, injection)" },
+            { "id": "med_time", "type": "text", "label": "Time(s) to give" },
+            { "id": "med_reason", "type": "text", "label": "Reason / condition treated" },
+            { "id": "med_provider", "type": "text", "label": "Prescribing provider & phone" },
+            { "id": "med_start", "type": "date", "label": "Start date" },
+            { "id": "med_end", "type": "date", "label": "End date" }
+          ]
+        },
+        {
+          "id": "rescue",
+          "title": "Rescue medication & authorization",
+          "fields": [
+            { "id": "med_rescue", "type": "checkbox", "label": "This is an emergency or rescue medication (e.g. epinephrine, rescue inhaler, seizure rescue)" },
+            { "id": "med_signs", "type": "textarea", "label": "Signs or symptoms indicating it should be given" },
+            { "id": "med_after", "type": "textarea", "label": "Steps to take after administering" },
+            { "id": "med_side", "type": "textarea", "label": "Known side effects to watch for" },
+            { "id": "med_storage", "type": "text", "label": "Storage requirements" },
+            { "id": "med_auth", "type": "checkbox", "label": "I authorize trained Rise & Shine ABA staff to administer this medication as directed. I will supply it in the original labeled container and notify Rise & Shine ABA in writing of any change.", "requiredWhenFormShown": true }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "F04",
+      "title": "Personal Care & Toileting",
+      "enabled": true,
+      "required": true,
+      "sections": [
+        {
+          "id": "care",
+          "title": "Toileting support",
+          "fields": [
+            { "id": "t_independent", "type": "checkbox", "label": "My child is independent with toileting and needs no assistance" },
+            { "id": "t_prompt", "type": "checkbox", "label": "My child needs verbal prompting or reminders only" },
+            { "id": "t_assist", "type": "checkbox", "label": "My child needs hands-on assistance with clothing, wiping, or hygiene" },
+            { "id": "t_diaper", "type": "checkbox", "label": "My child wears diapers or pull-ups and needs changing" },
+            { "id": "t_training", "type": "checkbox", "label": "My child is in toilet training and a training protocol is in place" },
+            { "id": "t_supplies", "type": "checkbox", "label": "I will provide diapers, wipes, and a change of clothing, labeled with my child's name" },
+            { "id": "t_allergy", "type": "text", "label": "Allergies to wipes, creams, or products" },
+            { "id": "t_pref", "type": "textarea", "label": "Specific instructions or preferences" },
+            { "id": "t_consent", "type": "checkbox", "label": "I consent to trained Rise & Shine ABA staff providing the personal care and toileting support indicated above.", "required": true }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "F05",
+      "title": "Illness & Exclusion Policy",
+      "enabled": true,
+      "required": true,
+      "sections": [
+        {
+          "id": "policy",
+          "title": "Illness policy",
+          "body": "Please keep your child home when they are ill. Staff will call you to pick up if symptoms start at the center.",
+          "fields": [
+            { "id": "ill_ack", "type": "checkbox", "label": "I have read and understand the Illness & Exclusion Policy.", "required": true }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "F06",
+      "title": "Emergency & Safety",
+      "enabled": true,
+      "required": true,
+      "sections": [
+        {
+          "id": "safety",
+          "title": "If we need to evacuate",
+          "fields": [
+            { "id": "e_sensory", "type": "textarea", "label": "Sensory sensitivities relevant to alarms or evacuation" },
+            { "id": "e_mobility", "type": "textarea", "label": "Mobility needs or equipment required" },
+            { "id": "e_calm", "type": "textarea", "label": "What helps your child during a stressful or unexpected event" },
+            { "id": "e_ack", "type": "checkbox", "label": "I have been informed of Rise & Shine ABA's emergency and evacuation procedures.", "required": true }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "F07",
+      "title": "Behavior Intervention & Crisis Consent",
+      "enabled": false,
+      "required": false,
+      "sections": [
+        {
+          "id": "consent",
+          "title": "Behavior intervention",
+          "body": "Held for legal review — do not present on the kiosk.",
+          "fields": [
+            {
+              "id": "b_choice",
+              "type": "radio",
+              "label": "Consent",
+              "options": [
+                { "value": "consent", "label": "I consent to the behavior intervention procedures described, as implemented under a written behavior plan developed by the supervising BCBA." },
+                { "value": "decline", "label": "I do NOT consent to the use of protective holds. I understand a clinical discussion will follow." }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "F08",
+      "title": "Community Outing Consent",
+      "enabled": true,
+      "required": true,
+      "sections": [
+        {
+          "id": "outing",
+          "title": "Community sessions",
+          "fields": [
+            { "id": "o_walk", "type": "checkbox", "label": "Walking distance only — no vehicle transport" },
+            { "id": "o_parent", "type": "checkbox", "label": "Parent will transport to and from the outing location" },
+            { "id": "o_staff", "type": "checkbox", "label": "I consent to my child being transported by Rise & Shine ABA staff in a staff vehicle" },
+            { "id": "e_elope", "type": "checkbox", "label": "Elopement (running) is a concern" },
+            { "id": "o_avoid", "type": "textarea", "label": "Locations to avoid" },
+            { "id": "o_safety", "type": "textarea", "label": "Any other safety concerns" },
+            { "id": "o_consent", "type": "checkbox", "label": "I consent to my child participating in community-based sessions as described.", "required": true }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "F09",
+      "title": "Food Allergy & Diet",
+      "enabled": true,
+      "required": true,
+      "sections": [
+        {
+          "id": "allergies",
+          "title": "Allergies",
+          "fields": [
+            { "id": "a_none", "type": "checkbox", "label": "No known food allergies" },
+            { "id": "a_food", "type": "textarea", "label": "Food allergies" },
+            { "id": "a_react", "type": "textarea", "label": "Reaction / severity" },
+            { "id": "a_epi", "type": "checkbox", "label": "My child has a prescribed epinephrine auto-injector" },
+            { "id": "a_nonfood", "type": "textarea", "label": "Non-food allergies (latex, materials, environmental)" }
+          ]
+        },
+        {
+          "id": "diet",
+          "title": "Diet",
+          "fields": [
+            { "id": "d_none", "type": "checkbox", "label": "No dietary restrictions" },
+            { "id": "d_relig", "type": "text", "label": "Religious or cultural dietary requirements" },
+            { "id": "d_texture", "type": "checkbox", "label": "Texture, sensory, or feeding-related restrictions" },
+            { "id": "d_avoid", "type": "textarea", "label": "Foods to avoid entirely" },
+            { "id": "d_prefer", "type": "textarea", "label": "Preferred foods / reinforcers we may use" }
+          ]
+        },
+        {
+          "id": "snacks",
+          "title": "Snacks at the center",
+          "fields": [
+            { "id": "s_parent", "type": "checkbox", "label": "I will send all food and snacks with my child, labeled with their name" },
+            { "id": "s_center", "type": "checkbox", "label": "I consent to my child being offered snacks provided by the center" },
+            { "id": "s_reinforce", "type": "checkbox", "label": "I consent to food being used as a reinforcer within the behavior plan, limited to the preferred foods listed above" },
+            { "id": "f_ack", "type": "checkbox", "label": "The information above is accurate. I will notify Rise & Shine ABA in writing of any change.", "required": true }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -46,6 +46,15 @@ struct ClientDetailView: View {
                         .font(RSFont.display(40, weight: .bold))
                         .foregroundStyle(Color.espresso)
                     StatusPill(signedIn: client.isSignedIn)
+                    if !client.intakeComplete {
+                        Text("First visit")
+                            .font(RSFont.body(13, weight: .semibold))
+                            .foregroundStyle(Color.sunriseDeep)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(Color.sunriseTint)
+                            .clipShape(Capsule())
+                    }
                 }
                 Spacer()
             }

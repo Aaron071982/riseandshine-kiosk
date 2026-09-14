@@ -62,6 +62,12 @@ struct RootView: View {
         case .sign: SignView()
         case .confirm: ConfirmView()
         case .staffAudit: StaffAuditView()
+        case .intake:
+            if let intake = state.intake {
+                IntakeView(intake: intake)
+            } else {
+                Color.clear.onAppear { state.openSearch() }
+            }
         }
     }
 }

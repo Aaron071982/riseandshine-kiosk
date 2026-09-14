@@ -169,6 +169,15 @@ struct SearchRow: View {
                 .lineLimit(1)
             }
             Spacer()
+            if !client.intakeComplete {
+                Text("First visit")
+                    .font(RSFont.body(13, weight: .semibold))
+                    .foregroundStyle(Color.sunriseDeep)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(Color.sunriseTint)
+                    .clipShape(Capsule())
+            }
             FormsPill(count: client.outstandingForms)
             StatusPill(signedIn: client.isSignedIn)
             Image(systemName: "chevron.right")

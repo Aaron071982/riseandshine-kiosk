@@ -77,6 +77,8 @@ struct DirectoryClient: Codable, Identifiable, Hashable {
     var outstandingForms: Int
     var currentStatus: CheckDirection
     var todaySession: TodaySession?
+    var intakeComplete: Bool
+    var dateOfBirth: String?
 
     var displayName: String { "\(firstName) \(lastName)".trimmingCharacters(in: .whitespaces) }
     var initials: String {
@@ -91,6 +93,7 @@ struct DirectoryClient: Codable, Identifiable, Hashable {
     enum CodingKeys: String, CodingKey {
         case id, firstName, lastName, parentName, parentRelationship
         case outstandingForms, currentStatus, todaySession
+        case intakeComplete, dateOfBirth
     }
 
     init(
@@ -101,7 +104,9 @@ struct DirectoryClient: Codable, Identifiable, Hashable {
         parentRelationship: String? = nil,
         outstandingForms: Int = 0,
         currentStatus: CheckDirection = .out,
-        todaySession: TodaySession? = nil
+        todaySession: TodaySession? = nil,
+        intakeComplete: Bool = true,
+        dateOfBirth: String? = nil
     ) {
         self.id = id
         self.firstName = firstName
@@ -111,6 +116,8 @@ struct DirectoryClient: Codable, Identifiable, Hashable {
         self.outstandingForms = outstandingForms
         self.currentStatus = currentStatus
         self.todaySession = todaySession
+        self.intakeComplete = intakeComplete
+        self.dateOfBirth = dateOfBirth
     }
 
     init(from decoder: Decoder) throws {
@@ -123,6 +130,14 @@ struct DirectoryClient: Codable, Identifiable, Hashable {
         outstandingForms = try c.decodeIfPresent(Int.self, forKey: .outstandingForms) ?? 0
         currentStatus = try c.decodeIfPresent(CheckDirection.self, forKey: .currentStatus) ?? .out
         todaySession = try c.decodeIfPresent(TodaySession.self, forKey: .todaySession)
+        intakeComplete = try c.decodeIfPresent(Bool.self, forKey: .intakeComplete) ?? false
+        if let raw = try c.decodeIfPresent(String.self, forKey: .dateOfBirth) {
+            dateOfBirth = raw
+        } else {
+            enum Alt: String, CodingKey { case dob }
+            let alt = try decoder.container(keyedBy: Alt.self)
+            dateOfBirth = try alt.decodeIfPresent(String.self, forKey: .dob)
+        }
     }
 }
 
